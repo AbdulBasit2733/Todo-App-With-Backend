@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"
+      integrity="sha512-DdX/YwF5e41Ok+AI81HI8f5/5UsoxCVT9GKYZRIzpLxb8Twz4ZwPPX+jQMwMhNQ9b5+zDEefc+dcvQoPWGNZ3g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <section id="register" class="min-h-screen">
+      <div class="flex flex-col justify-center items-center">
+        <h1 class="mb-10 font-bold text-[38px]">Register</h1>
+        <div class="bg-black px-20 py-14 rounded-md">
+          <div class="flex flex-col">
+            <label class="font-semibold text-[18px] text-white">Username</label>
+            <input
+              id="register_username"
+              class="mb-5 mt-2 border py-2 px-5 font-semibold shadow-lg rounded-md"
+              type="text"
+              placeholder="Enter Your Username"
+            />
+            <label class="font-semibold text-[18px] text-white">Email</label>
+            <input
+              id="register_email"
+              class="mb-5 mt-2 border py-2 px-5 font-semibold shadow-lg rounded-md"
+              type="email"
+              placeholder="Enter Your Email"
+            />
+            <label class="font-semibold text-[18px] text-white">Password</label>
+            <input
+              id="register_password"
+              class="mt-2 border py-2 px-5 font-semibold shadow-lg rounded-md"
+              type="password"
+              placeholder="Enter Your Password"
+            />
+            <div class="mt-10 flex items-center gap-x-10">
+              <button
+                onclick="registerUser()"
+                class="bg-white px-5 py-2 w-fit font-bold rounded-md"
+              >
+                Sign Up
+              </button>
+              <p class="text-white">
+                Already Have an account ?
+                <a class="text-blue-400 font-bold" href="login.html">Login</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="login" class="min-h-screen">
+      <div class="flex flex-col justify-center items-center">
+        <h1 class="mb-10 font-bold text-[38px]">Login</h1>
+        <div class="bg-black px-20 py-14 rounded-md">
+          <div class="flex flex-col">
+            <label class="font-semibold text-[18px] text-white">Username</label>
+            <input
+              id="login_username"
+              class="mb-5 mt-2 border py-2 px-5 font-semibold shadow-lg rounded-md"
+              type="text"
+              placeholder="Enter Your Username"
+            />
+            <label class="font-semibold text-[18px] text-white">Password</label>
+            <input
+              id="login_password"
+              class="mt-2 border py-2 px-5 font-semibold shadow-lg rounded-md"
+              type="password"
+              placeholder="Enter Your Password"
+            />
+            <div class="mt-10 flex items-center gap-x-10">
+              <button
+                type="submit"
+                onclick="loginUser()"
+                class="bg-white px-5 py-2 w-fit font-bold rounded-md"
+              >
+                Sign In
+              </button>
+              <p class="text-white">
+                Don't Have an account ?
+                <a class="text-blue-400 font-bold" href="register.html"
+                  >Sign Up</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="account" class="min-h-screen">
+      <div class="flex justify-end mt-5 px-5">
+        <button
+          onclick="logOut()"
+          class="bg-black text-white px-5 py-2 font-semibold"
+        >
+          Logout
+        </button>
+      </div>
+      <div class="flex flex-col justify-center items-center">
+        <h1 class="text-[38px] mb-20 font-bold text-center">
+          You Can Your Todos Here
+        </h1>
+        <div class="bg-black px-20 py-14 rounded-md">
+          <input
+            id="todo_name"
+            name="todo"
+            class="px-5 py-2 rounded-sm focus:outline-none font-semibold"
+            type="text"
+            placeholder="Add Todo"
+          />
+          <button
+            class="bg-green-600 px-5 py-2 font-bold text-white rounded-md"
+            onclick="addTodo()"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+      <div id="todos-list" class="flex justify-center items-center">
+        <div class="bg-black text-white w-[20rem] mt-5 rounded-md px-10 py-5">
+          <div id="todos" class="space-y-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      async function getUserInfo() {
+        try {
+          const response = await axios.get("http://localhost:3000/me", {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+          });
+          const register = document.getElementById("register");
+          const login = document.getElementById("login");
+          const account = document.getElementById("account");
+          if (response.data.success) {
+            login && login.remove();
+            register && register.remove();
+            console.log(response.data);
+          } else {
+            login && login.remove();
+            account && account.remove();
+          }
+        } catch (error) {
+          console.error("Error fetching user info:", error);
+        }
+      }
+      getUserInfo();
+
+      async function addTodo() {
+        try {
+          const inputVal = document.getElementById("todo_name").value;
+          document.getElementById("todo_name").value = ""; // Clear the input field
+          const response = await axios.post(
+            "http://localhost:3000/addTodo",
+            { name: inputVal },
+            { headers: { token: localStorage.getItem("token") } }
+          );
+          if (response.data.success) {
+            alert(response.data.message);
+            loadTodos(); // Reload todos after adding
+          } else {
+            alert(response.data.message);
+          }
+        } catch (error) {
+          console.error("Error adding todo:", error);
+        }
+      }
+
+      async function deleteTodo(id) {
+        console.log(id);
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/deleteTodo",
+            { id },
+            { headers: { token: localStorage.getItem("token") } }
+          );
+          if (response.data.success) {
+            alert(response.data.message);
+            loadTodos(); // Reload todos after deletion
+          } else {
+            alert(response.data.message);
+          }
+        } catch (error) {
+          console.error("Error deleting todo:", error);
+        }
+      }
+
+      async function loadTodos() {
+        try {
+          const response = await axios.get("http://localhost:3000/me", {
+            headers: { token: localStorage.getItem("token") },
+          });
+          if (response.data.success) {
+            const todos = response.data.todos;
+            const todosDiv = document.getElementById("todos");
+            todosDiv.innerHTML = ""; // Clear existing todos
+            todos.forEach((todo, index) => {
+              const todoDiv = document.createElement("div");
+              todoDiv.className =
+                "flex justify-between items-center mb-2 p-4 bg-gray-900 space-x-5 text-white rounded-lg";
+
+              const idDiv = document.createElement("div");
+              idDiv.className = "text-lg font-semibold";
+              idDiv.innerText = index + 1;
+
+              const todoNameDiv = document.createElement("div");
+              todoNameDiv.className = "text-lg flex-1";
+              todoNameDiv.innerText = todo.name;
+
+              const deleteButton = document.createElement("button");
+              deleteButton.className =
+                "bg-red-500 text-white px-4 py-2 rounded-md font-semibold";
+              deleteButton.innerText = "Delete";
+              deleteButton.id = index;
+              deleteButton.addEventListener("click", () => {
+                deleteTodo(deleteButton.id); // Pass the correct ID
+              });
+
+              todoDiv.appendChild(idDiv);
+              todoDiv.appendChild(todoNameDiv);
+              todoDiv.appendChild(deleteButton);
+
+              todosDiv.appendChild(todoDiv);
+            });
+          } else {
+            console.warn("Error fetching todos:", response.data.message);
+          }
+        } catch (error) {
+          console.error("Error loading todos:", error);
+        }
+      }
+
+      function logOut() {
+        localStorage.removeItem("token");
+        window.location.href = "/login.html"; // Redirect to login page
+      }
+
+      async function registerUser() {
+        try {
+          const username = document.getElementById("register_username").value;
+          const email = document.getElementById("register_email").value;
+          const password = document.getElementById("register_password").value;
+          const response = await axios.post("http://localhost:3000/register", {
+            username,
+            email,
+            password,
+          });
+          alert(response.data.message);
+          if (response.data.success) {
+            setTimeout(() => {
+              window.location.href = "/login.html";
+            }, 3000);
+          }
+        } catch (error) {
+          console.error("Error registering user:", error);
+        }
+      }
+
+      async function loginUser() {
+        try {
+          const username = document.getElementById("login_username").value;
+          const password = document.getElementById("login_password").value;
+          const response = await axios.post("http://localhost:3000/login", {
+            username,
+            password,
+          });
+          alert(response.data.message);
+          if (response.data.success) {
+            localStorage.setItem("token", response.data.token);
+            setTimeout(() => {
+              window.location.href = "/index.html";
+            }, 3000);
+          }
+        } catch (error) {
+          console.error("Error logging in:", error);
+        }
+      }
+
+      // Load todos when the page loads
+      window.onload = loadTodos;
+    </script>
+  </body>
+</html>

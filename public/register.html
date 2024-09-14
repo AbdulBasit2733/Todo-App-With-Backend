@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"
+      integrity="sha512-DdX/YwF5e41Ok+AI81HI8f5/5UsoxCVT9GKYZRIzpLxb8Twz4ZwPPX+jQMwMhNQ9b5+zDEefc+dcvQoPWGNZ3g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <section id="register" class="min-h-screen">
+      <div class="flex flex-col justify-center items-center">
+        <h1 class="mb-10 font-bold text-[38px]">Register</h1>
+        <div class="bg-black px-20 py-14 rounded-md">
+          <div class="flex flex-col">
+            <label class="font-semibold text-[18px] text-white">Username</label>
+            <input
+              id="register_username"
+              class="mb-5 mt-2 border py-2 px-5 font-semibold shadow-lg rounded-md"
+              type="text"
+              placeholder="Enter Your Username"
+            />
+            <label class="font-semibold text-[18px] text-white">Email</label>
+            <input
+              id="register_email"
+              class="mb-5 mt-2 border py-2 px-5 font-semibold shadow-lg rounded-md"
+              type="email"
+              placeholder="Enter Your Email"
+            />
+            <label class="font-semibold text-[18px] text-white">Password</label>
+            <input
+              id="register_password"
+              class="mt-2 border py-2 px-5 font-semibold shadow-lg rounded-md"
+              type="password"
+              placeholder="Enter Your Password"
+            />
+            <div class="mt-10 flex items-center gap-x-10">
+              <button
+                onclick="registerUser()"
+                class="bg-white px-5 py-2 w-fit font-bold rounded-md"
+              >
+                Sign Up
+              </button>
+              <p class="text-white">
+                Already Have an account ?
+                <a class="text-blue-400 font-bold" href="login.html">Login</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      async function registerUser() {
+        const username = document.getElementById("register_username").value;
+        const email = document.getElementById("register_email").value;
+        const password = document.getElementById("register_password").value;
+        // console.log(username, email, password);
+        const response = await axios.post("http://localhost:3000/register", {
+          username,
+          email,
+          password,
+        });
+        alert(response.data.message);
+        if (response.data.success === true) {
+          setTimeout((window.location.href = "/login.html"), 3000);
+        }
+      }
+    </script>
+  </body>
+</html>
