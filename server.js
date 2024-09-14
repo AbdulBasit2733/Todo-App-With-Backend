@@ -11,6 +11,18 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/login.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+app.get('/register.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Middleware for auth
 const authMiddleware = (req, res, next) => {
   const token = req.headers.token;
